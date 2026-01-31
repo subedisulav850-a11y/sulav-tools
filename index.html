@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>SulavGaming FF Tools</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body {
+    font-family: Arial, sans-serif;
+    background: #0f172a;
+    color: white;
+    text-align: center;
+    padding: 20px;
+}
+h1 { color: #38bdf8; }
+
+button {
+    padding: 12px 20px;
+    margin: 8px;
+    font-size: 16px;
+    border: none;
+    border-radius: 8px;
+    background: #2563eb;
+    color: white;
+    cursor: pointer;
+}
+button:hover { background: #1d4ed8; }
+
+input {
+    padding: 10px;
+    width: 80%;
+    max-width: 300px;
+    margin: 10px;
+    border-radius: 6px;
+    border: none;
+}
+
+#result {
+    margin-top: 20px;
+    background: #020617;
+    padding: 15px;
+    border-radius: 10px;
+    white-space: pre-wrap;
+}
+
+img {
+    max-width: 100%;
+    border-radius: 10px;
+    margin-top: 10px;
+}
+</style>
+</head>
+
+<body>
+
+<h1>🔥 SulavGaming FF Tools</h1>
+
+<div>
+    <button onclick="playerInfo()">🎮 Player Info</button>
+    <button onclick="wishlist()">💖 Wishlist</button>
+    <button onclick="outfit()">🧥 Outfit</button>
+    <button onclick="banCheck()">🚫 Ban Check</button>
+    <button onclick="eventInfo()">🎉 Event Info</button>
+</div>
+
+<div id="inputArea"></div>
+<div id="result"></div>
+
+<script>
+function showInput(placeholder, callback) {
+    document.getElementById("inputArea").innerHTML = `
+        <input id="userInput" placeholder="${placeholder}">
+        <br>
+        <button onclick="${callback}()">Submit</button>
+    `;
+    document.getElementById("result").innerHTML = "";
+}
+
+// ================= PLAYER INFO =================
+function playerInfo() {
+    showInput("Enter FF UID", "fetchInfo");
+}
+function fetchInfo() {
+    let uid = document.getElementById("userInput").value;
+    fetch(`http://danger-info-alpha.vercel.app/accinfo?uid=${uid}&key=DANGERxINFO`)
+    .then(res => res.text())
+    .then(data => {
+        document.getElementById("result").innerText = data;
+    });
+}
+
+// ================= WISHLIST =================
+function wishlist() {
+    showInput("Enter UID", "fetchWishlist");
+}
+function fetchWishlist() {
+    let uid = document.getElementById("userInput").value;
+    fetch(`https://danger-wishlist-manager.vercel.app/check-wishlist?uid=${uid}`)
+    .then(res => res.json())
+    .then(data => {
+        let html = "<h3>💖 Wishlist</h3>";
+        if (data.image) {
+            html += `<img src="${data.image}">`;
+        }
+        html += `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+        document.getElementById("result").innerHTML = html;
+    });
+}
+
+// ================= OUTFIT =================
+function outfit() {
+    showInput("Enter UID", "fetchOutfit");
+}
+function fetchOutfit() {
+    let uid = document.getElementById("userInput").value;
+    let imgUrl = `https://danger-info-alpha.vercel.app/outfit-image?uid=${uid}&key=X-DANGER-OUTFIT-X`;
+    document.getElementById("result").innerHTML = `
+        <h3>🧥 Outfit</h3>
+        <img src="${imgUrl}">
+        <p>${imgUrl}</p>
+    `;
+}
+
+// ================= BAN CHECK =================
+function banCheck() {
+    showInput("Enter UID", "fetchBan");
+}
+function fetchBan() {
+    let uid = document.getElementById("userInput").value;
+    fetch(`https://mrc-ban-check.vercel.app/bancheck?uid=${uid}&key=mrc`)
+    .then(res => res.text())
+    .then(data => {
+        document.getElementById("result").innerText = data;
+    });
+}
+
+// ================= EVENT INFO =================
+function eventInfo() {
+    showInput("Enter Region (BD / IND / ME / SG)", "fetchEvent");
+}
+function fetchEvent() {
+    let region = document.getElementById("userInput").value.toUpperCase();
+    fetch(`https://danger-event-info.vercel.app/event?region=${region}&key=DANGERxEVENT`)
+    .then(res => res.text())
+    .then(data => {
+        document.getElementById("result").innerText = data;
+    });
+}
+</script>
+
+</body>
+</html>
